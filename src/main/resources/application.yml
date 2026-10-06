@@ -1,16 +1,18 @@
 spring:
   application:
     name: product-service
+  config:
+    import: optional:file:./.config/application.yml
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: ${DB-URL}
     driverClassName: org.h2.Driver
-    username: sa
-    password:
+    username: ${DB_USER}
+    password: ${DB_PASS}
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-    show-sql: false
+    show-sql: true
   h2:
     console:
       enabled: true
@@ -24,6 +26,10 @@ springdoc:
     disable-swagger-default-url: true
 
 app:
+  api:
+    version: @project.version@
+    title: Product Service API
+    description: A toy RESTful Product Web Service built with Kotlin, Spring Boot, and Gradle
   security:
-    user: admin
-    password: password123
+    user: ${APP_USERNAME}
+    password: ${APP_PASSWORD}

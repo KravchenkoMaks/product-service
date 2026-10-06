@@ -5,11 +5,19 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityScheme
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+@ConfigurationProperties(prefix = "app.api")
+data class OpenApiProperties(
+    val version: String,
+    val title: String,
+    val description: String,
+)
+
 @Configuration
-class OpenApiConfig {
+class OpenApiConfig(private val properties: OpenApiProperties) {
     @Bean
     fun openApi(): OpenAPI {
         return OpenAPI()
@@ -25,9 +33,9 @@ class OpenApiConfig {
             )
             .info(
                 Info()
-                    .title("Product Service API")
-                    .version("1.0.0")
-                    .description("A toy RESTful Product Web Service built with Kotlin, Spring Boot, and Gradle")
+                    .title(properties.title)
+                    .version(properties.version)
+                    .description(properties.description)
                     .contact(
                         Contact()
                             .name("Product Service")

@@ -5,17 +5,17 @@ import java.math.BigDecimal
 
 @Entity
 @Table(name = "products")
-data class Product(
+class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column
-    val description: String? = null,
+    var description: String? = null,
 
     @Column(nullable = false)
-    val price: BigDecimal
+    var price: BigDecimal
 )

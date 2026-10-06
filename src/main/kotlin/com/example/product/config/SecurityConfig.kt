@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.password.NoOpPasswordEncoder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
@@ -20,13 +20,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @ConfigurationProperties(prefix = "app.security")
 data class SecurityProperties(
-    var user: String = "admin",
-    var password: String = "password123"
+    var user: String,
+    var password: String
 )
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(SecurityProperties::class)
 class SecurityConfig(
     private val securityProperties: SecurityProperties
 ) {
@@ -51,10 +50,9 @@ class SecurityConfig(
     }
 
     @Bean
-    fun userDetailsService(): UserDetailsService {
-        val user: UserDetails = User.builder()
-            .username(securityProperties.user)
-            .password(securityProperties.password)
+    fun userDetailsService(passwordEncoder: PasswordEncoder): UserDetailsService {
+        val user: UserDetails = User.withUsername(securityProperties.user)
+            .password(passwordEncoder.encode(securityProperties.password))
             .authorities("ROLE_USER")
             .build()
 
@@ -62,7 +60,7 @@ class SecurityConfig(
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder = NoOpPasswordEncoder.getInstance()
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
